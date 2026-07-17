@@ -1,7 +1,7 @@
 # This is what you would get if you buy Cookie Clicker off of Temu
 # Cookie Clicker is free btw so I don't know why you would spend money for it
 
-from pyray import *
+from raylib import *
 import time
 
 COOKIE_X = 170
@@ -55,7 +55,7 @@ upgrades = {
 
 
 def mouse_over_cookie() -> bool:
-    mouse = get_mouse_position()
+    mouse = GetMousePosition()
 
     dx = mouse.x - COOKIE_X
     dy = mouse.y - COOKIE_Y
@@ -64,16 +64,16 @@ def mouse_over_cookie() -> bool:
 
 
 def main() -> None:
-    init_window(1200, 900, "Cookie Clicker (from Temu)")
-    set_target_fps(60)
+    InitWindow(1200, 900, b"Cookie Clicker (from Temu)")
+    SetTargetFPS(60)
 
     textures = {
-        "cookie": load_texture(r"assets\cookie.png"),
-        "cursor": load_texture(r"assets\cursor.png"),
-        "grandma": load_texture(r"assets\grandma.png"),
-        "farm": load_texture(r"assets\farm.png"),
-        "mine": load_texture(r"assets\mine.png"),
-        "factory": load_texture(r"assets\factory.png"),
+        "cookie": LoadTexture(b"assets/cookie.png"),
+        "cursor": LoadTexture(b"assets/cursor.png"),
+        "grandma": LoadTexture(b"assets/grandma.png"),
+        "farm": LoadTexture(b"assets/farm.png"),
+        "mine": LoadTexture(b"assets/mine.png"),
+        "factory": LoadTexture(b"assets/factory.png"),
     }
 
     cookies = 0.0
@@ -81,7 +81,7 @@ def main() -> None:
 
     last_time = time.time()
 
-    while not window_should_close():
+    while not WindowShouldClose():
 
         # ================= TIME + CPS =================
 
@@ -97,17 +97,17 @@ def main() -> None:
 
         # ================= CLICK COOKIE =================
 
-        if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT) and mouse_over_cookie():
+        if IsMouseButtonPressed(MOUSE_BUTTON_LEFT) and mouse_over_cookie():
             cookie_held = True
 
-        if cookie_held and is_mouse_button_released(MouseButton.MOUSE_BUTTON_LEFT):
+        if cookie_held and IsMouseButtonReleased(MOUSE_BUTTON_LEFT):
             cookies += 1
             cookie_held = False
 
         # ================= BUY UPGRADES =================
 
-        if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT):
-            mouse = get_mouse_position()
+        if IsMouseButtonPressed(MOUSE_BUTTON_LEFT):
+            mouse = GetMousePosition()
 
             for key, upgrade in upgrades.items():
 
@@ -115,14 +115,17 @@ def main() -> None:
                 scale = upgrade["scale"]
                 x, y = upgrade["pos"]
 
-                rect = Rectangle(
-                    x,
-                    y,
-                    texture.width * scale,
-                    texture.height * scale,
+                rect = ffi.new(
+                    "Rectangle *",
+                    (
+                        x,
+                        y,
+                        texture.width * scale,
+                        texture.height * scale
+                    )
                 )
 
-                if check_collision_point_rec(mouse, rect):
+                if CheckCollisionPointRec(mouse, rect[0]):
 
                     if cookies >= upgrade["cost"]:
                         cookies -= upgrade["cost"]
@@ -130,16 +133,16 @@ def main() -> None:
 
         # ================= DRAW =================
 
-        begin_drawing()
-        clear_background((112, 125, 185, 255))
+        BeginDrawing()
+        ClearBackground((112, 125, 185, 255))
 
-        draw_text(f"Cookies: {int(cookies)}", 40, 30, 40, RAYWHITE)
-        draw_text(f"CPS: {round(cps, 1)}", 55, 90, 28, RAYWHITE)
+        DrawText(f"Cookies: {int(cookies)}".encode(), 40, 30, 40, WHITE)
+        DrawText(f"CPS: {round(cps, 1)}".encode(), 55, 90, 28, WHITE)
 
         cookie_scale = 0.9 if cookie_held else 1.0
         cookie_texture = textures["cookie"]
 
-        draw_texture_ex(
+        DrawTextureEx(
             cookie_texture,
             (
                 COOKIE_X - (cookie_texture.width * cookie_scale) / 2,
@@ -155,29 +158,29 @@ def main() -> None:
             scale = upgrade["scale"]
             x, y = upgrade["pos"]
 
-            draw_texture_ex(texture, (x, y), 0, scale, WHITE)
+            DrawTextureEx(texture, (x, y), 0, scale, WHITE)
 
             text_y = int(y + texture.height * scale + 5)
 
-            draw_text(upgrade["name"], x, text_y, UPGRADE_FONT_SIZE, RAYWHITE)
-            draw_text(
-                f"Cost: {upgrade['cost']}",
+            DrawText(upgrade["name"].encode(), x, text_y, UPGRADE_FONT_SIZE, WHITE)
+            DrawText(
+                f"Cost: {upgrade['cost']}".encode(),
                 x,
                 text_y + 30,
                 UPGRADE_FONT_SIZE,
-                RAYWHITE,
+                WHITE,
             )
-            draw_text(
-                f"Owned: {upgrade['owned']}",
+            DrawText(
+                f"Owned: {upgrade['owned']}".encode(),
                 x,
                 text_y + 60,
                 UPGRADE_FONT_SIZE,
-                RAYWHITE,
+                WHITE,
             )
 
-        end_drawing()
+        EndDrawing()
 
-    close_window()
+    CloseWindow()
 
 
 if __name__ == "__main__":

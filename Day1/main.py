@@ -6,7 +6,7 @@ from turtle import *
 
 SIDES = 4           # Number of sides for the shape we use to spiral
 ANGLE = 91          # Rotation after each shape
-ITERATIONS = 200     # Number of iterations
+ITERATIONS = 200    # Number of iterations
 GROWTH = 1          # Controls how much the shape grows per iteration
 
 PEN_SIZE = 2
