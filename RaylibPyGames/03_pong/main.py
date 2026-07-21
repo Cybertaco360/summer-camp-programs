@@ -1,4 +1,4 @@
-from pyray import *
+from raylibpy import *
 
 
 def clamp(value, low, high):

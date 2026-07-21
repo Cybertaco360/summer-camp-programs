@@ -1,6 +1,6 @@
 import math
 import random
-from pyray import *
+from raylibpy import *
 
 
 def wrap(value, limit):
